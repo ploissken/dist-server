@@ -1,0 +1,27 @@
+version: "3"
+
+networks:
+  traefik:
+    external: true
+  internal:
+    external: false
+
+services:
+  dist-server:
+    command: bash -c "npm install && npx gulp serve"
+    image: node:12-slim
+    working_dir: "/home/node"
+    volumes:
+      - "./:/home/node/:cached"
+    networks:
+      - traefik
+      - internal
+    labels:
+      - "traefik.backend=dist-server"
+      - "traefik.docker.network=traefik"
+      - "traefik.enable=true"
+      - "traefik.port=9090"
+      - "traefik.frontend.rule=Host:con.txto.com.br"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 9090
